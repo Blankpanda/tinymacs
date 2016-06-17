@@ -8,94 +8,114 @@ static TCHAR szTitle[] = _T("...");
 
 HINSTANCE hInst;
 
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK MainWindowCallBack(HWND, UINT, WPARAM, LPARAM);
+
+LRESULT CALLBACK MainWindowCallBack(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
+{
+	PAINTSTRUCT ps;
+	HDC DeviceContext = BeginPaint(hWnd, &ps);
+	LRESULT Result = 0;
+
+	switch(Message)
+	{
+	case WM_SIZE:
+	{	
+	     OutputDebugStringA("WM_SIZE\n");
+	} break;
+	
+	case WM_PAINT:
+	{	   
+	     int X = ps.rcPaint.left;
+	     int Y = ps.rcPaint.top;
+	     LONG Height = ps.rcPaint.bottom - ps.rcPaint.top;
+	     LONG Width = ps.rcPaint.right - ps.rcPaint.left;
+	     PatBlt(DeviceContext,X, Y, Width, Height, WHITENESS);
+	     EndPaint(hWnd, &ps);	    
+	} break;
+	
+	case WM_CLOSE:
+	{
+	     OutputDebugStringA("WM_CLOSE\n");
+	} break;
+	    
+	case WM_DESTROY:
+	{
+	     PostQuitMessage(0);     
+	} break;
+
+	default:
+	{
+	     Result = DefWindowProc(hWnd, Message, wParam, lParam);
+	     return DefWindowProc(hWnd, Message, wParam, lParam);	
+	} break;
+
+	}
+
+	return Result;
+}
+
+
+
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,int nCmdShow)
 {
-     WNDCLASSEX wcex;
+     WNDCLASS WindowClass = {0};    
 
-     wcex.cbSize = sizeof(WNDCLASSEX); 
-     wcex.style = CS_HREDRAW | CS_VREDRAW;
-     wcex.lpfnWndProc = WndProc;
-     wcex.cbClsExtra = 0;
-     wcex.cbWndExtra = 0;
-     wcex.hInstance = hInstance;
-     wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
-     wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-     wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
-     wcex.lpszMenuName= NULL;
-     wcex.lpszClassName= szWindowClass;
-     wcex.hIconSm= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
-
-     if (!RegisterClassEx(&wcex)) {
-	MessageBox(NULL,
-            _T("Call to RegisterClassEx failed!"),
-            _T("Win32 Guided Tour"),
-            NULL);
-	return 1;
-     }
+     WindowClass.style = CS_OWNDC|CS_HREDRAW|CS_VREDRAW;    
+     WindowClass.lpfnWndProc = MainWindowCallBack;
+     WindowClass.cbClsExtra = 0;
+     WindowClass.cbWndExtra = 0;
+     WindowClass.hInstance = hInstance;
+     WindowClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
+     WindowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+     WindowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+     WindowClass.lpszMenuName = NULL;
+     WindowClass.lpszClassName = szWindowClass;
+ 
      
-     hInst = hInstance;
+     if(RegisterClass(&WindowClass)) {
 
-     HWND hWnd = CreateWindow(
-	     szWindowClass,
-	     szTitle,
-	     WS_OVERLAPPEDWINDOW,
-	     CW_USEDEFAULT, CW_USEDEFAULT,
-	     500, 100,
-	     NULL,
-	     NULL,
-	     hInstance,
-	     NULL
-     );
+	   HWND WindowHandle = CreateWindowEx(
+	       0,
+	       WindowClass.lpszClassName,
+	       "Testing",
+	       WS_OVERLAPPEDWINDOW,
+	       CW_USEDEFAULT,
+	       CW_USEDEFAULT,
+	       CW_USEDEFAULT,
+	       CW_USEDEFAULT,
+	       0,
+	       0,
+	       hInstance,
+	       0
+	       );
 
-     if (!hWnd) {
-	    MessageBox(NULL,
-            _T("Call to RegisterClassEx failed!"),
-            _T("Win32 Guided Tour"),
-            NULL);
-	    return 1;
+	   
+	   ShowWindow(WindowHandle,nCmdShow);
+	   UpdateWindow(WindowHandle);
+
+	  if(WindowHandle) {
+	       MSG msg;
+	       while(GetMessage(&msg,NULL,0,0)) {
+	  		 TranslateMessage(&msg);
+	  		 DispatchMessage(&msg);
+	       }
+	  }
+	  else
+	  {
+	       MessageBox(NULL,
+			  _T("WindowHandleFailed!"),
+			  _T("Win32 Guided Tour"),
+			  NULL);
+	  }	 	    
      }
-
-
-     ShowWindow(hWnd,
-		nCmdShow);
-     UpdateWindow(hWnd);
-
-     MSG msg;
-     while (GetMessage(&msg, NULL, 0, 0)) {
-	     TranslateMessage(&msg);
-	     DispatchMessage(&msg);
+     else
+     {
+	  MessageBox(NULL,
+	  	     _T("Call to RegisterClassEx failed!"),
+	  	     _T("Win32 Guided Tour"),
+	  	     NULL);	
      }
-
-     return (int) msg.wParam;
 }
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	PAINTSTRUCT ps;
-	HDC hdc;
-	TCHAR greeting[] = _T("Hello, World");
-
-	switch(message) {
-	
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-		TextOut(hdc, 5, 5, greeting, _tcslen(greeting));
-
-		EndPaint(hWnd, &ps);
-		break;
-		
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
-		break;
-	}
-
-	return 0;
-}
-
 
 
