@@ -1,11 +1,6 @@
 #include <windows.h>
-#include <stdlib.h>
-#include <string.h>
-#include <tchar.h>
 
-static TCHAR szWindowClass[] = _T("win32app");
-static TCHAR szTitle[] = _T("...");
-
+#include "debugLogger.h"
 HINSTANCE hInst;
 
 LRESULT CALLBACK MainWindowCallBack(HWND, UINT, WPARAM, LPARAM);
@@ -20,7 +15,7 @@ LRESULT CALLBACK MainWindowCallBack(HWND hWnd, UINT Message, WPARAM wParam, LPAR
 	{
 	case WM_SIZE:
 	{	
-	     OutputDebugStringA("WM_SIZE\n");
+	  WriteDebugMessage("WM_SIZE\n");
 	} break;
 	
 	case WM_PAINT:
@@ -35,7 +30,7 @@ LRESULT CALLBACK MainWindowCallBack(HWND hWnd, UINT Message, WPARAM wParam, LPAR
 	
 	case WM_CLOSE:
 	{
-	     OutputDebugStringA("WM_CLOSE\n");
+	  WriteDebugMessage("WM_Close\n");
 	} break;
 	    
 	case WM_DESTROY:
@@ -54,13 +49,12 @@ LRESULT CALLBACK MainWindowCallBack(HWND hWnd, UINT Message, WPARAM wParam, LPAR
 	return Result;
 }
 
-
-
-
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,int nCmdShow)
 {
-     WNDCLASS WindowClass = {0};    
-
+     WNDCLASS WindowClass = {0};
+     
+  
+     
      WindowClass.style = CS_OWNDC|CS_HREDRAW|CS_VREDRAW;    
      WindowClass.lpfnWndProc = MainWindowCallBack;
      WindowClass.cbClsExtra = 0;
@@ -70,7 +64,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
      WindowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
      WindowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
      WindowClass.lpszMenuName = NULL;
-     WindowClass.lpszClassName = szWindowClass;
+     WindowClass.lpszClassName = "editor";
  
      
      if(RegisterClass(&WindowClass)) {
@@ -89,11 +83,11 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	       hInstance,
 	       0
 	       );
-
 	   
+
 	   ShowWindow(WindowHandle,nCmdShow);
 	   UpdateWindow(WindowHandle);
-
+	   CallDebugConsole();
 	  if(WindowHandle) {
 	       MSG msg;
 	       while(GetMessage(&msg,NULL,0,0)) {
@@ -103,18 +97,12 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	  }
 	  else
 	  {
-	       MessageBox(NULL,
-			  _T("WindowHandleFailed!"),
-			  _T("Win32 Guided Tour"),
-			  NULL);
-	  }	 	    
+	    DebugMbox(WindowHandle, "RegisterClass Failed!.", 0, 0 ,1);
+	  }
      }
      else
      {
-	  MessageBox(NULL,
-	  	     _T("Call to RegisterClassEx failed!"),
-	  	     _T("Win32 Guided Tour"),
-	  	     NULL);	
+       //TODO: DEBUG LOG
      }
 }
 
