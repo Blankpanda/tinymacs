@@ -57,6 +57,7 @@ void DebugMbox(HWND WindowHandle, LPCTSTR text, LPCSTR caption, UINT type, bool 
      int temp = MessageBox(WindowHandle, text, caption, type);
 
      if (logDebug) {
+	         
 	  dbg(text);
 	  WriteDebugMessage(DEBUG_MESSAGE,file,(char*)&text);
      }
@@ -71,7 +72,7 @@ LPCTSTR GetDebugMessage()
 void WriteDebugMessage(int DEBUG_MESSAGE, char* file, char* message)
 {
      char * DebugString = "";
-     // I hate how emacs organzies switch statementsn
+     // I hate how emacs organzies switch statements
      switch (DEBUG_MESSAGE) {
      case DEBUG_NOTIFY: {
 	  DebugString = "[Notice]";
