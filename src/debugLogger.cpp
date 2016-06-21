@@ -47,6 +47,8 @@ void CallDebugConsole(void) {
      setvbuf( stderr, NULL, _IONBF, 0 );
 
      LPCTSTR message = NULL;
+
+     // if were failing to start, keep the console open
 }
 
 // Displays a message box with specified parameters

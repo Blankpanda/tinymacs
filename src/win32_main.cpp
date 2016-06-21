@@ -13,6 +13,13 @@ LRESULT CALLBACK MainWindowCallBack(HWND hWnd, UINT Message, WPARAM wParam, LPAR
 
 	switch(Message)
 	{
+
+	case WM_CREATE:
+	  {
+	    
+	  }  break;
+	
+     
 	case WM_SIZE:
 	{
 	     POINT mouseCursor;
@@ -22,8 +29,7 @@ LRESULT CALLBACK MainWindowCallBack(HWND hWnd, UINT Message, WPARAM wParam, LPAR
 	     DeferWindowPos(0 ,hWnd, 0, ps.rcPaint.left, ps.rcPaint.right, mouseCursor.x , mouseCursor.y ,0);
 	     EndDeferWindowPos(0);
 
-	     // int bytes = GetModuleFileName(NULL, __FILE__, sizeof(__FILE__));
-	     // WriteDebugMessage(DEBUG_NOTIFY, "win32_main.cpp",(char*)bytes);
+	     WriteDebugMessage(DEBUG_NOTIFY, __FILE__, "WM_SIZE");
 	} break;
 	case WM_PAINT:
 	{	   
@@ -31,7 +37,7 @@ LRESULT CALLBACK MainWindowCallBack(HWND hWnd, UINT Message, WPARAM wParam, LPAR
 	     int Y = ps.rcPaint.top;
 	     LONG Height = ps.rcPaint.bottom - ps.rcPaint.top;
 	     LONG Width = ps.rcPaint.right - ps.rcPaint.left;
-	     PatBlt(DeviceContext,X, Y, Width, Height, WHITENESS|BLACKNESS);
+	     PatBlt(DeviceContext,X, Y, Width, Height, WHITENESS);
 	     EndPaint(hWnd, &ps);	    
 	} break;
 	
@@ -73,7 +79,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
      if(RegisterClass(&WindowClass)) {
 
 	   HWND WindowHandle = CreateWindowEx(
-	       0,
+	       WS_EX_CLIENTEDGE,
 	       WindowClass.lpszClassName,
 	       "editor",
 	       WS_OVERLAPPEDWINDOW,
@@ -86,7 +92,18 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	       hInstance,
 	       0
 	       );
+
+	   RECT WindowRect;	    
+	   GetWindowRect(WindowHandle, &WindowRect);	   
+	   LONG Height = WindowRect.bottom;	    
+	   LONG Width = WindowRect.right;
 	   
+	   HWND TextBoxHandle;
+	   TextBoxHandle = CreateWindowEx(WS_EX_CLIENTEDGE, "editor", "Line one",
+					  WS_BORDER | WS_CHILD |WS_VISIBLE,
+					  0, WindowRect.left, Height, Width,	// x, y, w, h
+					  WindowHandle, 0, 0, 0);
+
 	   ShowWindow(WindowHandle,nCmdShow);
 	   UpdateWindow(WindowHandle);
 	   CallDebugConsole();
@@ -100,7 +117,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	  }
 	  else
 	  {
-	       WriteDebugMessage(DEBUG_ERROR, "win32_main.cpp","WindowHandle Returned NULL.");
+	       WriteDebugMessage(DEBUG_ERROR, "win32_main.cpp","WindowHandle Returned NULL.");	      
 	  }
      }
      else
