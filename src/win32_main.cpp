@@ -130,9 +130,25 @@ void CreateEditorTextBox(HWND* TextBoxHandle, HWND* WindowHandle, RECT* WindowRe
      LONG Width = WindowRect->right;
      	   
      *TextBoxHandle = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "",
-				    WS_BORDER | WS_CHILD | WS_VISIBLE,
+				    WS_BORDER | WS_CHILD | WS_VISIBLE |
+				     WS_VSCROLL | ES_LEFT | ES_MULTILINE |
+				     ES_AUTOVSCROLL,
 				    0,0, Width, Height,	// x, y, w, h
 				    *WindowHandle, 0, 0, 0);
+
+     
+     // hwndEdit = CreateWindowEx(
+     // 	  0, L"EDIT",   predefined class 
+     // 	  NULL,         no window title 
+     // 	  WS_CHILD | WS_VISIBLE | WS_VSCROLL | 
+     // 	  ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL, 
+     // 	  0, 0, 0, 0,   set size in WM_SIZE message 
+     // 	  hwnd,         parent window 
+     // 	  (HMENU) ID_EDITCHILD,   edit control ID 
+     // 	  (HINSTANCE) GetWindowLong(hwnd, GWL_HINSTANCE), 
+     // 	  NULL);        pointer not needed 
+ 
+     
 }
 
 
