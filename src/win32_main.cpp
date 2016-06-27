@@ -4,6 +4,7 @@
 HINSTANCE hInst;
 
 LRESULT CALLBACK MainWindowCallBack(HWND, UINT, WPARAM, LPARAM);
+void CreateEditorTextBox(HWND* TextBoxHandle, HWND* WindowHandle, RECT* WindowRect);
 
 LRESULT CALLBACK MainWindowCallBack(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
@@ -93,16 +94,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	       0
 	       );
 
-	   RECT WindowRect;	    
-	   GetWindowRect(WindowHandle, &WindowRect);	   
-	   LONG Height = WindowRect.bottom;	    
-	   LONG Width = WindowRect.right;
-	   
+	   RECT WindowRect;
 	   HWND TextBoxHandle;
-	   TextBoxHandle = CreateWindowEx(WS_EX_CLIENTEDGE, "editor", "Line one",
-					  WS_BORDER | WS_CHILD |WS_VISIBLE,
-					  0, WindowRect.left, Height, Width,	// x, y, w, h
-					  WindowHandle, 0, 0, 0);
+	   CreateEditorTextBox(&TextBoxHandle, &WindowHandle, &WindowRect);
 
 	   ShowWindow(WindowHandle,nCmdShow);
 	   UpdateWindow(WindowHandle);
@@ -124,6 +118,21 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
      {
 	  WriteDebugMessage(DEBUG_ERROR, "win32_main.cpp", "RegisterClass failed.");
      }
+}
+
+// NOTE: Making these initalized in WinMain incase they need to be edited there
+// Investigate best practices futher
+void CreateEditorTextBox(HWND* TextBoxHandle, HWND* WindowHandle, RECT* WindowRect)
+{
+     
+     GetWindowRect(*WindowHandle, WindowRect);	   
+     LONG Height = WindowRect->bottom;	    
+     LONG Width = WindowRect->right;
+     	   
+     *TextBoxHandle = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "",
+				    WS_BORDER | WS_CHILD | WS_VISIBLE,
+				    0,0, Width, Height,	// x, y, w, h
+				    *WindowHandle, 0, 0, 0);
 }
 
 
