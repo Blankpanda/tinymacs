@@ -1,6 +1,7 @@
 #include <windows.h>
 
 #include "debugLogger.h"
+#include "directory.h"
 HINSTANCE hInst;
 
 LRESULT CALLBACK MainWindowCallBack(HWND, UINT, WPARAM, LPARAM);
@@ -29,9 +30,11 @@ LRESULT CALLBACK MainWindowCallBack(HWND hWnd, UINT Message, WPARAM wParam, LPAR
 	     BeginDeferWindowPos(0);
 	     DeferWindowPos(0 ,hWnd, 0, ps.rcPaint.left, ps.rcPaint.right, mouseCursor.x , mouseCursor.y ,0);
 	     EndDeferWindowPos(0);
-
-	     WriteDebugMessage(DEBUG_NOTIFY, __FILE__, "WM_SIZE");
-	} break;
+	     
+	     // WriteDebugMessage(DEBUG_NOTIFY, __FILE__, "WM_SIZE");
+	     getwdir();
+	} break
+	    ;
 	case WM_PAINT:
 	{	   
 	     int X = ps.rcPaint.left;

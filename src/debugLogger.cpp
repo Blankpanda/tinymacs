@@ -16,7 +16,8 @@
     debugmessage structure ( so I dont have to type out a super long message)
     investigate __FILE__
 */
-void CallDebugConsole(void) {
+void CallDebugConsole(void)
+{
      CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
      int consoleHandleR, consoleHandleW;
      long stdioHandle;
@@ -68,7 +69,7 @@ LPCTSTR GetDebugMessage()
      return "";
 }
 
-// TODO: Timestamp, Automate the file feature
+// TODO: Timestamp, 
 void WriteDebugMessage(int DEBUG_MESSAGE, char* file, char* message)
 {
      char * DebugString = "";
